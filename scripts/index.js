@@ -6,7 +6,6 @@
 
 // @todo: Вывести карточки на страницу
 
-
 // находиим DOM узлы
 
 //находим элемент контейнера с карточками
@@ -21,14 +20,19 @@ function removeCard(card) {
 }
 
 // Функция создания карточки
-function createCard({ name, link, alt }, removeCard) {
-  //клонируем содержимое тега template
+function createCard({ name, link }, removeCard) {
+  //клонируем содержимое тега template и и сохраняем в переменную элемента карточки
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
 
-  // наполняем содержимым
+  // наполняем содержимым элемент карточки
   cardElement.querySelector('.card__title').textContent = name;
-  cardElement.querySelector('.card__image').src = link;
-  cardElement.querySelector('.card__image').alt = alt;
+
+  //находим элемент изображения и сохраняем в переменную
+  const сardImage = cardElement.querySelector('.card__image');
+
+  // наполняем содержимым элемент изображения
+  сardImage.src = link;
+  сardImage.alt = name;
 
   // выберем кнопку удаления и добавим слушателя, чтобы по клику удалять соответствующий элемент
   cardElement
@@ -36,6 +40,8 @@ function createCard({ name, link, alt }, removeCard) {
     .addEventListener('click', () => {
       removeCard(cardElement);
     });
+
+  //возвращаем подготовленный к выводу элемент карточки
   return cardElement;
 }
 
