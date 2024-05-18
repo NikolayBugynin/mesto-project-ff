@@ -46,3 +46,18 @@ initialCards.forEach((cardElement) => {
   const newCard = createCard(cardElement, removeCard);
   placesList.append(newCard);
 });
+
+
+// вствляем год в footer
+
+//Creating Date Objects
+const date = new Date();
+
+// извлекаем год
+const year = date.getFullYear();
+
+// находим span в footer c годом
+const footerYear = document.querySelector('.footer__year');
+
+//встявляем значение
+footerYear.textContent = date.getFullYear();
