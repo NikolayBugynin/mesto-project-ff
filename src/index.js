@@ -17,13 +17,14 @@ closeModalButtons.forEach((button) => {
 });
 
 // функция открытия попапа с картинкой
-function openModalImage({ name, link, alt }, modal) {
+function openModalImage({ link, name }, modal) {
   //наполняем содержимым элемент изображения
   const openModalImagelink = document.querySelector('.popup__image');
   openModalImagelink.src = link;
-  const openModalImagename = document.querySelector('.popup__caption');
-  openModalImagename.textContent = name;
-  openModalImagename.textContent = alt;
+  const openModalImageName = document.querySelector('.popup__caption');
+  openModalImageName.textContent = name;
+  openModalImageName.alt= name;
+
   // открываем попап с картинкой
   openModal(modal);
 }
