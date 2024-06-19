@@ -6,6 +6,12 @@ function getCardTemplate() {
 //темплейт карточки
 const cardTemplate = getCardTemplate();
 
+//Функция клонирования шаблона карточки
+function getCardElement() {
+  //клонируем содержимое тега template
+  return cardTemplate.querySelector('.card').cloneNode(true);
+}
+
 //попап для просмотра увеличенного изображения
 const popupImage = document.querySelector('.popup_type_image');
 
@@ -23,11 +29,6 @@ function likeCard(evt) {
 
 // функция создания карточки
 function createCard({ name, link }, removeCard, openModalImage, likeCard) {
-  //Функция клонирования шаблона карточки
-  function getCardElement() {
-    //клонируем содержимое тега template
-    return cardTemplate.querySelector('.card').cloneNode(true);
-  }
   //элемент карточки
   const cardElement = getCardElement();
 

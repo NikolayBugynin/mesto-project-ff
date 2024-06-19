@@ -9,6 +9,11 @@ export const placesList = document.querySelector('.places__list');
 //все кнопки закрытия попапов
 const closeModalButtons = document.querySelectorAll('.popup__close');
 
+//элемент картинки попапа
+const openModalImagelink = document.querySelector('.popup__image');
+//подпись элемента картинки попапа
+const openModalImageName = document.querySelector('.popup__caption');
+
 // закрытия попапа по крестику
 closeModalButtons.forEach((button) => {
   button.addEventListener('click', (e) => {
@@ -19,11 +24,9 @@ closeModalButtons.forEach((button) => {
 // функция открытия попапа с картинкой
 function openModalImage({ link, name }, modal) {
   //наполняем содержимым элемент изображения
-  const openModalImagelink = document.querySelector('.popup__image');
   openModalImagelink.src = link;
-  const openModalImageName = document.querySelector('.popup__caption');
   openModalImageName.textContent = name;
-  openModalImageName.alt= name;
+  openModalImageName.alt = name;
 
   // открываем попап с картинкой
   openModal(modal);
