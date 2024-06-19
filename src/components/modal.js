@@ -16,7 +16,7 @@ function closeModal(modal) {
 function closeModalOnOverlay(evt) {
   if (evt.target.classList.contains('popup_is-opened')) {
     const openedPopup = document.querySelector('.popup_is-opened');
-    openedPopup.classList.remove('popup_is-opened');
+    closeModal(openedPopup);
   }
 }
 
@@ -24,27 +24,8 @@ function closeModalOnOverlay(evt) {
 function closeModalByEsc(evt) {
   if (evt.key === 'Escape') {
     const openedPopup = document.querySelector('.popup_is-opened');
-    openedPopup.classList.remove('popup_is-opened');
-    if (openedPopup) {
-    }
+    closeModal(openedPopup);
   }
 }
 
-// функция открытия попапа с картинкой
-function openModalImage({ name, link }, modal) {
-  //наполняем содержимым элемент изображения
-  const openModalImagelink = document.querySelector('.popup__image');
-  openModalImagelink.src = link;
-  const openModalImagename = document.querySelector('.popup__caption');
-  openModalImagename.textContent = name;
-  // открываем попап с картинкой
-  openModal(modal);
-}
-
-export {
-  openModal,
-  closeModal,
-  closeModalOnOverlay,
-  closeModalByEsc,
-  openModalImage,
-};
+export { openModal, closeModal, closeModalOnOverlay, closeModalByEsc };

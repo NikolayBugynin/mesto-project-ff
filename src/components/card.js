@@ -1,5 +1,13 @@
-import { cardTemplate } from '../index';
-import { popupImage } from '../index';
+//Функция получения шаблона карточки cardTemplate
+function getCardTemplate() {
+  return document.querySelector('#card-template').content;
+}
+
+//темплейт карточки
+const cardTemplate = getCardTemplate();
+
+//попап для просмотра увеличенного изображения
+const popupImage = document.querySelector('.popup_type_image');
 
 //функция удаления карточки
 function removeCard(card) {
@@ -15,8 +23,13 @@ function likeCard(evt) {
 
 // функция создания карточки
 function createCard({ name, link }, removeCard, openModalImage, likeCard) {
-  //клонируем содержимое тега template и и сохраняем в переменную элемента карточки
-  const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
+  //Функция клонирования шаблона карточки
+  function getCardElement() {
+    //клонируем содержимое тега template
+    return cardTemplate.querySelector('.card').cloneNode(true);
+  }
+  //элемент карточки
+  const cardElement = getCardElement();
 
   // наполняем содержимым элемент карточки
   cardElement.querySelector('.card__title').textContent = name;
