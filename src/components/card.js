@@ -3,37 +3,43 @@ function getCardTemplate() {
   return document.querySelector('#card-template').content;
 }
 
-//темплейт карточки
-const cardTemplate = getCardTemplate();
-
 //Функция клонирования шаблона карточки
 function getCardElement() {
   //клонируем содержимое тега template
   return cardTemplate.querySelector('.card').cloneNode(true);
 }
 
+//темплейт карточки
+const cardTemplate = getCardTemplate();
+
 //попап для просмотра увеличенного изображения
 const popupImage = document.querySelector('.popup_type_image');
 
-//функция удаления карточки
-function removeCard(card) {
+//функция лайка карточки
+
+export function removeCard(card) {
   card.remove();
 }
 
-//функция лайка карточки
-function likeCard(evt) {
-  if (evt.target.classList.contains('card__like-button')) {
-    evt.target.classList.toggle('card__like-button_is-active');
-  }
-}
-
 // функция создания карточки
-function createCard({ name, link }, removeCard, openModalImage, likeCard) {
+export function createCard(
+  { name, link, likes, owner, _id },
+  removeCard,
+  openModalImage,
+  like,
+  dislike,
+  deleteCard,
+  handleLikeCard,
+  isLiked
+) {
   //элемент карточки
   const cardElement = getCardElement();
 
   // наполняем содержимым элемент карточки
   cardElement.querySelector('.card__title').textContent = name;
+
+  //отображение количества лайков карточки
+  cardElement.querySelector('.card__likes-counter').textContent = likes.length;
 
   //находим элемент изображения и сохраняем в переменную
   const cardImage = cardElement.querySelector('.card__image');
@@ -46,8 +52,16 @@ function createCard({ name, link }, removeCard, openModalImage, likeCard) {
   cardElement
     .querySelector('.card__delete-button')
     .addEventListener('click', () => {
-      removeCard(cardElement);
+      deleteCard(_id)
+        .then(() => {
+          removeCard(cardElement);
+        })
+        .catch((err) => {
+          console.log(err); // выводим ошибку в консоль
+        });
     });
+
+  // console.log(likes);
 
   // прикрепляем обработчик к кнопке открытия попапа просмотра изображения
   cardImage.addEventListener('click', () => {
@@ -57,13 +71,61 @@ function createCard({ name, link }, removeCard, openModalImage, likeCard) {
   //находим родителя всех элементов с сердечком
   const likesContainer = cardElement.querySelector('.card__description');
 
-  // используя делегирование, прикрепляем обработчик на родителя элементов с сердечком,
+  //  сделаем так, чтобы лайк стоял на тех карточках, что мы лайнули при перезагразке
+  function checkLike() {
+    return likes.some((elem) => elem._id === '244c57b36a82ccd387eecd96');
+  }
+
+
+
+  console.log(checkLike());
+
+  function handleLikeCard(evt) {
+    if (checkLike() === false) { 
+      evt.target.classList.add('card__like-button_is-active');
+      likes.length = likes.length +1;
+      like(_id)
+        .then(() => {})
+        .catch((err) => {
+          console.log(err); // выводим ошибку в консоль
+        });
+    } else {
+      evt.target.classList.add('card__like-button_is-active');
+      dislike(_id)
+        .then(() => {})
+        .catch((err) => {
+          console.log(err); // выводим ошибку в консоль
+        });
+    }
+  }
+
+  //снимаем лайк
   likesContainer.addEventListener('click', (evt) => {
-    likeCard(evt);
+    handleLikeCard(evt);
   });
+
+  let myID = '244c57b36a82ccd387eecd96';
+
+  //  сделаем так, чтобы иконка удаления была только на созданных нами карточках
+  function showDeleteButtton() {
+    if (myID !== owner._id) {
+      cardElement
+        .querySelector('.card__delete-button')
+        .classList.add('card__delete-button_is-inactive');
+    }
+  }
+  // и вызовем ее
+  showDeleteButtton();
+
+  // function isLiked() {
+  //   if (likes.some((elem) => elem._id === '244c57b36a82ccd387eecd96')) {
+  //     cardElement
+  //       .querySelector('.card__like-button')
+  //       .classList.add('card__like-button_is-active');
+  //   }
+  // }
+  // isLiked();
 
   //возвращаем подготовленный к выводу элемент карточки
   return cardElement;
 }
-
-export { removeCard, likeCard, createCard };
