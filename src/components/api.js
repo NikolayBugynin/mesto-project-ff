@@ -55,7 +55,7 @@ export const deleteCard = (_id) => {
   }).then(handleResponse);
 };
 
-export const like = (_id) => {
+export const addLike = (_id) => {
   return fetch(`${config.baseUrl}/cards/likes/${_id}`, {
     method: 'PUT',
     headers: config.headers,
@@ -63,7 +63,7 @@ export const like = (_id) => {
   }).then(handleResponse);
 };
 
-export const dislike = (_id) => {
+export const removeLike = (_id) => {
   return fetch(`${config.baseUrl}/cards/likes/${_id}`, {
     method: 'DELETE',
     headers: config.headers,

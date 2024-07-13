@@ -12,6 +12,22 @@ function closeModal(modal) {
   document.removeEventListener('mouseup', closeModalOnOverlay);
 }
 
+//элемент картинки попапа
+const openModalImagelink = document.querySelector('.popup__image');
+//подпись элемента картинки попапа
+const openModalImageName = document.querySelector('.popup__caption');
+
+// функция открытия попапа с картинкой
+function openModalImage({ link, name }, modal) {
+  //наполняем содержимым элемент изображения
+  openModalImagelink.src = link;
+  openModalImageName.textContent = name;
+  openModalImageName.alt = name;
+
+  // открываем попап с картинкой
+  openModal(modal);
+}
+
 // функция закрытия попапа сликом на оверлей
 function closeModalOnOverlay(evt) {
   if (evt.target.classList.contains('popup_is-opened')) {
@@ -28,4 +44,10 @@ function closeModalByEsc(evt) {
   }
 }
 
-export { openModal, closeModal, closeModalOnOverlay, closeModalByEsc };
+export {
+  openModal,
+  closeModal,
+  openModalImage,
+  closeModalOnOverlay,
+  closeModalByEsc,
+};

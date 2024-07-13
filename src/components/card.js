@@ -1,3 +1,5 @@
+import { openModal } from './modal';
+
 //Функция получения шаблона карточки cardTemplate
 function getCardTemplate() {
   return document.querySelector('#card-template').content;
@@ -17,20 +19,19 @@ const popupImage = document.querySelector('.popup_type_image');
 
 //функция лайка карточки
 
-export function removeCard(card) {
-  card.remove();
-}
+let currentCard, currentCardId;
+
+//попап для удаления карточки
+const popupDeleteCard = document.querySelector('.popup_type_delete-card');
 
 // функция создания карточки
-export function createCard(
+function createCard(
   { name, link, likes, owner, _id },
-  removeCard,
+  myID,
   openModalImage,
-  like,
-  dislike,
-  deleteCard,
-  handleLikeCard,
-  isLiked
+  removeLike,
+  addLike,
+  handleDeleteCard
 ) {
   //элемент карточки
   const cardElement = getCardElement();
@@ -39,7 +40,8 @@ export function createCard(
   cardElement.querySelector('.card__title').textContent = name;
 
   //отображение количества лайков карточки
-  cardElement.querySelector('.card__likes-counter').textContent = likes.length;
+  const likesNumberElement = cardElement.querySelector('.card__likes-counter');
+  likesNumberElement.textContent = likes.length;
 
   //находим элемент изображения и сохраняем в переменную
   const cardImage = cardElement.querySelector('.card__image');
@@ -48,84 +50,71 @@ export function createCard(
   cardImage.src = link;
   cardImage.alt = name;
 
-  // выберем кнопку удаления и добавим слушателя, чтобы по клику удалять соответствующий элемент
-  cardElement
-    .querySelector('.card__delete-button')
-    .addEventListener('click', () => {
-      deleteCard(_id)
-        .then(() => {
-          removeCard(cardElement);
-        })
-        .catch((err) => {
-          console.log(err); // выводим ошибку в консоль
-        });
-    });
+  // кнопка удаления карточки
+  const deleteCardButton = cardElement.querySelector('.card__delete-button');
 
-  // console.log(likes);
+  //открываем попам подтверждения удаления карточки
+  deleteCardButton.addEventListener('click', (evt) =>
+    handleDeleteCard(cardElement, _id)
+  );
 
   // прикрепляем обработчик к кнопке открытия попапа просмотра изображения
   cardImage.addEventListener('click', () => {
     openModalImage({ name, link }, popupImage);
   });
 
-  //находим родителя всех элементов с сердечком
-  const likesContainer = cardElement.querySelector('.card__description');
-
-  //  сделаем так, чтобы лайк стоял на тех карточках, что мы лайнули при перезагразке
-  function checkLike() {
-    return likes.some((elem) => elem._id === '244c57b36a82ccd387eecd96');
+  //  сделаем так, чтобы иконка удаления была только на созданных нами карточках
+  if (owner._id !== myID) {
+    cardElement
+      .querySelector('.card__delete-button')
+      .classList.add('card__delete-button_is-inactive');
   }
 
+  // проверяем карточки, которые мы лайкнули до перезагрузки
+  if (likes.some((elem) => (elem._id === myID) === true)) {
+    cardElement
+      .querySelector('.card__like-button')
+      .classList.add('card__like-button_is-active');
+  }
 
-
-  console.log(checkLike());
-
+  //функция управления лайками
   function handleLikeCard(evt) {
-    if (checkLike() === false) { 
-      evt.target.classList.add('card__like-button_is-active');
-      likes.length = likes.length +1;
-      like(_id)
-        .then(() => {})
+    if (evt.target.classList.contains('card__like-button_is-active')) {
+      removeLike(_id)
+        .then((data) => {
+          likesNumberElement.textContent = data.likes.length;
+          evt.target.classList.toggle('card__like-button_is-active');
+        })
         .catch((err) => {
           console.log(err); // выводим ошибку в консоль
         });
     } else {
-      evt.target.classList.add('card__like-button_is-active');
-      dislike(_id)
-        .then(() => {})
+      addLike(_id)
+        .then((data) => {
+          likesNumberElement.textContent = data.likes.length;
+          evt.target.classList.toggle('card__like-button_is-active');
+        })
         .catch((err) => {
           console.log(err); // выводим ошибку в консоль
         });
     }
   }
 
-  //снимаем лайк
-  likesContainer.addEventListener('click', (evt) => {
+  //кнопка лайка
+  const likeButton = cardElement.querySelector('.card__like-button');
+
+  likeButton.addEventListener('click', (evt) => {
     handleLikeCard(evt);
   });
-
-  let myID = '244c57b36a82ccd387eecd96';
-
-  //  сделаем так, чтобы иконка удаления была только на созданных нами карточках
-  function showDeleteButtton() {
-    if (myID !== owner._id) {
-      cardElement
-        .querySelector('.card__delete-button')
-        .classList.add('card__delete-button_is-inactive');
-    }
-  }
-  // и вызовем ее
-  showDeleteButtton();
-
-  // function isLiked() {
-  //   if (likes.some((elem) => elem._id === '244c57b36a82ccd387eecd96')) {
-  //     cardElement
-  //       .querySelector('.card__like-button')
-  //       .classList.add('card__like-button_is-active');
-  //   }
-  // }
-  // isLiked();
 
   //возвращаем подготовленный к выводу элемент карточки
   return cardElement;
 }
+
+function handleDeleteCard(cardElement, _id) {
+  openModal(popupDeleteCard);
+  currentCardId = _id;
+  currentCard = cardElement;
+}
+
+export { createCard, handleDeleteCard, currentCard, currentCardId };

@@ -5,14 +5,22 @@
   -webkit-border-radius: 50%;
   -moz-border-radius: 50%;
   border-radius: 50%;
-  object-fit: cover;
-  object-position: center;
+  background-position: center;
+  background-size: cover;
+  cursor: pointer;
 }
 
-.profile__image:hover {
+.profile__image::before {
+  content: '';
+  display: block;
+  height: 100%;
+  opacity: 0;
+  background: rgb(0, 0, 0, 0.8) url('../../../images/pen.png') center no-repeat;
+  transition: opacity 0.5s;
+}
+
+.profile__image:hover::before {
   opacity: 0.6;
-  cursor: pointer;
-  background: url('../../../images/pen.png') center no-repeat;
 }
 
 @media screen and (max-width: 740px) {

@@ -2,7 +2,7 @@
   width: 100%;
   height: 47px;
   border: 0;
-  border-bottom: 1px solid rgba(0, 0, 0, .2);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   font-size: 14px;
   line-height: 18px;
   box-sizing: border-box;
@@ -14,13 +14,11 @@
   margin-bottom: 0;
 }
 
-.popup__input_type_error{
+.popup__input_type_error {
   border-bottom-color: red;
   /* Нижняя рамка становится красной всякий раз, 
   когда введённые данные некорректны */
-} 
-
-
+}
 
 @media screen and (max-width: 568px) {
   .popup__title {

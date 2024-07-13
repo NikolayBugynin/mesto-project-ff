@@ -20,7 +20,7 @@
       </header>
       <main class="content">
         <section class="profile page__section">
-          <img src="" alt="" class="profile__image" />
+          <div class="profile__image"></div>
           <div class="profile__info">
             <h1 class="profile__title"></h1>
             <button class="profile__edit-button" type="button"></button>
@@ -49,6 +49,7 @@
               minlength="2"
               maxlength="40"
               pattern="^[a-zA-Zа-яёА-ЯЁ\s\-]+$"
+              data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
               required
             />
             <span class="popup__input-error name-input-error"></span>
@@ -61,6 +62,7 @@
               minlength="2"
               maxlength="30"
               pattern="^[a-zA-Zа-яёА-ЯЁ\s\-]+$"
+              data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
               required
             />
             <span class="popup__input-error description-input-error"></span>
@@ -84,6 +86,7 @@
               minlength="2"
               maxlength="30"
               pattern="^[a-zA-Zа-яёА-ЯЁ\s\-]+$"
+              data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
               required
             />
             <span class="popup__input-error place-name-input-error"></span>
@@ -118,6 +121,17 @@
             <span class="popup__input-error link-input-error"></span>
             <button type="submit" class="button popup__button">
               Сохранить
+            </button>
+          </form>
+        </div>
+      </div>
+      <div class="popup popup_type_delete-card popup_is-animated">
+        <div class="popup__content">
+          <button type="button" class="popup__close"></button>
+          <h3 class="popup__title">Вы уверены</h3>
+          <form class="popup__form" name="delete-card">
+            <button type="submit" class="button popup__button">
+              Да
             </button>
           </form>
         </div>
