@@ -1,4 +1,4 @@
-import { openModal } from './modal';
+import { removeLike, addLike } from './api';
 
 //Функция получения шаблона карточки cardTemplate
 function getCardTemplate() {
@@ -14,23 +14,36 @@ function getCardElement() {
 //темплейт карточки
 const cardTemplate = getCardTemplate();
 
-//попап для просмотра увеличенного изображения
-const popupImage = document.querySelector('.popup_type_image');
-
-//функция лайка карточки
-
-let currentCard, currentCardId;
-
-//попап для удаления карточки
-const popupDeleteCard = document.querySelector('.popup_type_delete-card');
+//функция управления лайками
+function handleLikeCard(evt, _id, likesNumberElement) {
+  if (evt.target.classList.contains('card__like-button_is-active')) {
+    removeLike(_id)
+      .then((data) => {
+        likesNumberElement.textContent = data.likes.length;
+        evt.target.classList.toggle('card__like-button_is-active');
+      })
+      .catch((err) => {
+        console.log(err); // выводим ошибку в консоль
+      });
+  } else {
+    addLike(_id)
+      .then((data) => {
+        likesNumberElement.textContent = data.likes.length;
+        evt.target.classList.toggle('card__like-button_is-active');
+      })
+      .catch((err) => {
+        console.log(err); // выводим ошибку в консоль
+      });
+  }
+}
 
 // функция создания карточки
 function createCard(
   { name, link, likes, owner, _id },
   myID,
   openModalImage,
-  removeLike,
-  addLike,
+  popupImage,
+  handleLikeCard,
   handleDeleteCard
 ) {
   //элемент карточки
@@ -77,44 +90,15 @@ function createCard(
       .classList.add('card__like-button_is-active');
   }
 
-  //функция управления лайками
-  function handleLikeCard(evt) {
-    if (evt.target.classList.contains('card__like-button_is-active')) {
-      removeLike(_id)
-        .then((data) => {
-          likesNumberElement.textContent = data.likes.length;
-          evt.target.classList.toggle('card__like-button_is-active');
-        })
-        .catch((err) => {
-          console.log(err); // выводим ошибку в консоль
-        });
-    } else {
-      addLike(_id)
-        .then((data) => {
-          likesNumberElement.textContent = data.likes.length;
-          evt.target.classList.toggle('card__like-button_is-active');
-        })
-        .catch((err) => {
-          console.log(err); // выводим ошибку в консоль
-        });
-    }
-  }
-
   //кнопка лайка
   const likeButton = cardElement.querySelector('.card__like-button');
 
   likeButton.addEventListener('click', (evt) => {
-    handleLikeCard(evt);
+    handleLikeCard(evt, _id, likesNumberElement);
   });
 
   //возвращаем подготовленный к выводу элемент карточки
   return cardElement;
 }
 
-function handleDeleteCard(cardElement, _id) {
-  openModal(popupDeleteCard);
-  currentCardId = _id;
-  currentCard = cardElement;
-}
-
-export { createCard, handleDeleteCard, currentCard, currentCardId };
+export { createCard, handleLikeCard };

@@ -1,10 +1,5 @@
 // Функция, которая добавляет класс с ошибкой
-const showInputError = (
-  formElement,
-  inputElement,
-  errorMessage,
-  config
-) => {
+const showInputError = (formElement, inputElement, errorMessage, config) => {
   inputElement.classList.add(config.inputErrorClass);
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
   errorElement.textContent = errorMessage;
@@ -74,12 +69,15 @@ const toggleButtonState = (inputList, buttonElement, config) => {
 
 // функция, которая очищает ошибки валидации формы и делает кнопку неактивной
 export function clearValidation(formElement, config) {
+  formElement.reset();
   const inputList = Array.from(
     formElement.querySelectorAll(config.inputSelector)
   );
-  const buttonElement = formElement.querySelector(
-    config.submitButtonSelector
-  );
+  inputList.forEach((inputElement) => {
+    hideInputError(formElement, inputElement, config);
+  });
+
+  const buttonElement = formElement.querySelector(config.submitButtonSelector);
   toggleButtonState(inputList, buttonElement, config);
 }
 
@@ -88,9 +86,7 @@ const setEventListeners = (formElement, config) => {
   const inputList = Array.from(
     formElement.querySelectorAll(config.inputSelector)
   );
-  const buttonElement = formElement.querySelector(
-    config.submitButtonSelector
-  );
+  const buttonElement = formElement.querySelector(config.submitButtonSelector);
 
   inputList.forEach((inputElement) => {
     inputElement.addEventListener('input', function () {
@@ -102,9 +98,7 @@ const setEventListeners = (formElement, config) => {
 
 // функцию, которая найдёт и переберёт все формы на странице
 export const enableValidation = (config) => {
-  const formList = Array.from(
-    document.querySelectorAll(config.formSelector)
-  );
+  const formList = Array.from(document.querySelectorAll(config.formSelector));
   formList.forEach((formElement) => {
     formElement.addEventListener('submit', (e) => {
       e.preventDefault();

@@ -1,11 +1,6 @@
 import './pages/index.css'; // импорт главного файла стилей
-import {
-  createCard,
-  handleDeleteCard,
-  currentCard,
-  currentCardId,
-} from './components/card';
-import { openModal, closeModal, openModalImage } from './components/modal';
+import { createCard, handleLikeCard } from './components/card';
+import { openModal, closeModal } from './components/modal';
 import { enableValidation, clearValidation } from './components/validation';
 import {
   getInitialCards,
@@ -14,8 +9,6 @@ import {
   editAvatar,
   addNewCard,
   deleteCard,
-  removeLike,
-  addLike,
 } from './components/api.js';
 
 const validationConfig = {
@@ -30,10 +23,14 @@ const validationConfig = {
 //вызовем функцию, которая найдёт и переберёт все формы на странице:
 enableValidation(validationConfig);
 
-// MyID
-let MyID = null;
+// myID
+let myID = null;
+
+// переменные для handleDeleteCard, чтобы определить карточку
+let currentCard, currentCardId;
+
 //находим элемент контейнера с карточками
-export const placesList = document.querySelector('.places__list');
+const placesList = document.querySelector('.places__list');
 
 //все кнопки закрытия попапов
 const closeModalButtons = document.querySelectorAll('.popup__close');
@@ -52,6 +49,14 @@ const profileAddBButton = document.querySelector('.profile__add-button');
 //кнопка формы изменения аватара
 const profileAvatar = document.querySelector('.profile__image');
 
+//элемент картинки попапа
+const openModalImagelink = document.querySelector('.popup__image');
+//подпись элемента картинки попапа
+const openModalImageName = document.querySelector('.popup__caption');
+
+//попап для просмотра увеличенного изображения
+const popupImage = document.querySelector('.popup_type_image');
+
 //попап редактирования профиля
 const popupEditProfile = document.querySelector('.popup_type_edit');
 
@@ -61,6 +66,7 @@ const popupAddCard = document.querySelector('.popup_type_new-card');
 //попап редактирования аватара
 const popupAvatar = document.querySelector('.popup_type_avatar');
 
+//попап удаления карточки
 const popupDeleteCard = document.querySelector('.popup_type_delete-card');
 
 // выберираем элементы, куда должны быть вставлены значения полученные с сервера
@@ -149,14 +155,14 @@ function handleAddFormSubmit(evt) {
       placesList.prepend(
         createCard(
           cardData,
-          MyID,
+          myID,
           openModalImage,
-          removeLike,
-          addLike,
-          handleDeleteCard,
-          openModal
+          popupImage,
+          handleLikeCard,
+          handleDeleteCard
         )
       );
+      clearValidation(newPlaceFormElement, validationConfig);
       closeModal(popupAddCard);
     })
     .catch((err) => {
@@ -186,6 +192,7 @@ function handleAvatarFormSubmit(evt) {
   })
     .then((data) => {
       profileAvatar.style.backgroundImage = `url(\'${data.avatar}\')`;
+      clearValidation(editAvatarFormElement, validationConfig);
       closeModal(popupAvatar);
     })
     .catch((err) => {
@@ -199,6 +206,13 @@ function handleAvatarFormSubmit(evt) {
 editAvatarFormElement.addEventListener('submit', handleAvatarFormSubmit);
 
 const deleteCardFormElement = document.forms['delete-card'];
+
+// функция удаления карточки
+function handleDeleteCard(cardElement, _id) {
+  openModal(popupDeleteCard);
+  currentCardId = _id;
+  currentCard = cardElement;
+}
 
 // Обработчик «отправки» формы
 function handleDeleteCardFormSubmit(evt) {
@@ -215,23 +229,32 @@ function handleDeleteCardFormSubmit(evt) {
 // он будет следить за событием “submit” - «отправка»
 deleteCardFormElement.addEventListener('submit', handleDeleteCardFormSubmit);
 
+// функция открытия попапа с картинкой
+function openModalImage({ link, name }, modal) {
+  //наполняем содержимым элемент изображения
+  openModalImagelink.src = link;
+  openModalImageName.textContent = name;
+  openModalImageName.alt = name;
+
+  // открываем попап с картинкой
+  openModal(modal);
+}
+
 Promise.all([getUserInfo(), getInitialCards()])
-  .then((values) => {
-    profileTitle.textContent = values[0].name;
-    profileDescription.textContent = values[0].about;
-    // profileAvatar.style.backgroundImage = values[0].avatar;
-    profileAvatar.style.backgroundImage = `url(\'${values[0].avatar}\')`;
-    profileAvatar.src = values[0].avatar;
-    MyID = values[0]._id;
-    values[1].forEach((cardElement) => {
+  .then(([userData, cardsArray]) => {
+    profileTitle.textContent = userData.name;
+    profileDescription.textContent = userData.about;
+    profileAvatar.style.backgroundImage = `url(\'${userData.avatar}\')`;
+    profileAvatar.src = userData.avatar;
+    myID = userData._id;
+    cardsArray.forEach((cardElement) => {
       const newCard = createCard(
         cardElement,
-        MyID,
+        myID,
         openModalImage,
-        removeLike,
-        addLike,
-        handleDeleteCard,
-        openModal
+        popupImage,
+        handleLikeCard,
+        handleDeleteCard
       );
       placesList.append(newCard);
     });
